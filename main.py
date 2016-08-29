@@ -16,8 +16,8 @@ import json
 notifs = dict()
 TIME_SHIFT = 0
 
-firstAdmin = 98449438  # админ, отвечающий за смену постельного белья
-secondAdmin = 98449438  # админ, отвечающий за смену воды
+firstAdmin = 122762829  # админ, отвечающий за смену постельного белья
+secondAdmin = 122762829  # админ, отвечающий за смену воды
 
 # 122762829 - мой
 # 98449438 - Вера
@@ -27,6 +27,9 @@ secondAdmin = 98449438  # админ, отвечающий за смену во�
 
 locals = dict()
 notifs = dict()
+
+linenTime = [9, 13, 14, 18]
+waterTime = [12, 13, 17, 18]
 
 
 class AdminUser(object):
@@ -147,10 +150,10 @@ def button(bot, update):
                                 chat_id=query.message.chat_id,
                                 message_id=query.message.message_id)
 
-            time1 = now.replace(hour=9 + TIME_SHIFT, minute=0, second=0, microsecond=0)
-            time2 = now.replace(hour=13 + TIME_SHIFT, minute=0, second=0, microsecond=0)
-            time3 = now.replace(hour=14 + TIME_SHIFT, minute=0, second=0, microsecond=0)
-            time4 = now.replace(hour=18 + TIME_SHIFT, minute=0, second=0, microsecond=0)
+            time1 = now.replace(hour=linenTime[0] + TIME_SHIFT, minute=0, second=0, microsecond=0)
+            time2 = now.replace(hour=linenTime[1] + TIME_SHIFT, minute=0, second=0, microsecond=0)
+            time3 = now.replace(hour=linenTime[2] + TIME_SHIFT, minute=0, second=0, microsecond=0)
+            time4 = now.replace(hour=linenTime[3] + TIME_SHIFT, minute=0, second=0, microsecond=0)
             if (time1 <= now < time2) or (time3 <= now < time4):
                 process_change(bot, admin, query.message.chat)
             else:
@@ -178,10 +181,10 @@ def button(bot, update):
                                 chat_id=query.message.chat_id,
                                 message_id=query.message.message_id)
 
-            time1 = now.replace(hour=9 + TIME_SHIFT, minute=0, second=0, microsecond=0)
-            time2 = now.replace(hour=13 + TIME_SHIFT, minute=0, second=0, microsecond=0)
-            time3 = now.replace(hour=14 + TIME_SHIFT, minute=0, second=0, microsecond=0)
-            time4 = now.replace(hour=18 + TIME_SHIFT, minute=0, second=0, microsecond=0)
+            time1 = now.replace(hour=linenTime[0] + TIME_SHIFT, minute=0, second=0, microsecond=0)
+            time2 = now.replace(hour=linenTime[1] + TIME_SHIFT, minute=0, second=0, microsecond=0)
+            time3 = now.replace(hour=linenTime[2] + TIME_SHIFT, minute=0, second=0, microsecond=0)
+            time4 = now.replace(hour=linenTime[3] + TIME_SHIFT, minute=0, second=0, microsecond=0)
             if (time1 <= now < time2) or (time3 <= now < time4):
                 process_change(bot, admin, query.message.chat)
             else:
@@ -227,6 +230,9 @@ def notify(bot, job):
     bot.send_message(job.context, localisation_data["change_today"][locals[job.context]])
 
 
+changing_time = False
+
+
 def process_message(bot, message):
     text = message.message.text
     chat = message.message.chat
@@ -234,14 +240,37 @@ def process_message(bot, message):
     admin = next((x for x in admins if x.ID == chat.id), None)
 
     if admin is not None:
-        if text == "На месте" or text == "Present" or text == "Не на месте" or text == "Not present":
-            admin.setstatus("Present" if text == "На месте" or text == "Present" else "Not present")
-            bot.send_message(chat.id, localisation_data["current_status"][locals[chat.id]] % (
-                localisation_data[admin.status][locals[chat.id]]))
-            if text == "На месте" or text == "Present":
-                for user in admin.users:
-                    bot.send_message(user, localisation_data["admin_returned"][locals[user]])
-                admin.users = []
+        global changing_time;
+        if changing_time:
+            try:
+                tmp = text.split("\n")
+                list = []
+                for t in tmp:
+                    t = [int(i) for i in t.split(" ")]
+                    if len(t) != 4:
+                        raise Exception()
+                    list.append(t)
+                global linenTime, waterTime
+                linenTime = list[0]
+                waterTime = list[1]
+                changing_time = False;
+                bot.send_message(admin.ID, localisation_data["time_changed"][locals[admin.ID]])
+            except:
+                bot.send_message(admin.ID, localisation_data["wrong_data"][locals[admin.ID]])
+        else:
+            if text == localisation_data["Present"][locals[admin.ID]] \
+                    or text == localisation_data["Not present"][locals[admin.ID]]:
+                admin.setstatus("Present" if text == "На месте" or text == "Present" else "Not present")
+                bot.send_message(chat.id, localisation_data["current_status"][locals[chat.id]] % (
+                    localisation_data[admin.status][locals[chat.id]]))
+                if text == "На месте" or text == "Present":
+                    for user in admin.users:
+                        bot.send_message(user, localisation_data["admin_returned"][locals[user]])
+                    admin.users = []
+            if text == localisation_data["Time"][locals[admin.ID]]:
+                bot.send_message(admin.ID, localisation_data["set_time"][locals[admin.ID]])
+                changing_time = True
+
 
     else:
 
@@ -254,10 +283,10 @@ def process_message(bot, message):
 
         if (text == "\U0001F4A7"):
             now = datetime.now()
-            time1 = now.replace(hour=12 + TIME_SHIFT, minute=0, second=0, microsecond=0)
-            time2 = now.replace(hour=13 + TIME_SHIFT, minute=0, second=0, microsecond=0)
-            time3 = now.replace(hour=17 + TIME_SHIFT, minute=0, second=0, microsecond=0)
-            time4 = now.replace(hour=18 + TIME_SHIFT, minute=0, second=0, microsecond=0)
+            time1 = now.replace(hour=waterTime[0] + TIME_SHIFT, minute=0, second=0, microsecond=0)
+            time2 = now.replace(hour=waterTime[1] + TIME_SHIFT, minute=0, second=0, microsecond=0)
+            time3 = now.replace(hour=waterTime[2] + TIME_SHIFT, minute=0, second=0, microsecond=0)
+            time4 = now.replace(hour=waterTime[3] + TIME_SHIFT, minute=0, second=0, microsecond=0)
             admin = next((x for x in admins if x.ID == secondAdmin), None)
             if ((time1 <= now < time2) or (time3 <= now < time4)) and now.today().weekday() < 5:
                 bot.send_message(chat.id, localisation_data["change_water"][locals[chat.id]])
@@ -296,9 +325,10 @@ def language(bot, message):
 
     for tmp in fileinput.input('loc.txt', inplace=True):
         if tmp.startswith(str(message.message.chat_id)):
-            print(tmp.rstrip().replace(tmp, str(message.message.chat_id) + "#" + locals[message.message.chat_id]))
+            tmp = tmp.rstrip()
+            print(tmp.replace(tmp[-2:], locals[message.message.chat_id]))
         else:
-            print((tmp.rstrip().replace(tmp, tmp)))
+            print(tmp.rstrip())
     fileinput.close()
     start(bot, message)
 
@@ -316,7 +346,8 @@ def start(bot, message):
     if admin is not None:
 
         reply_markup = replykeyboardmarkup.ReplyKeyboardMarkup(
-            [[localisation_data["Present"][locals[admin.ID]], localisation_data["Not present"][locals[admin.ID]]]],
+            [[localisation_data["Present"][locals[admin.ID]], localisation_data["Not present"][locals[admin.ID]],
+              localisation_data["Time"][locals[admin.ID]]]],
             resize_keyboard=True)
         bot.send_message(message.message.chat_id,
                          localisation_data["set_status"][locals[admin.ID]] % (message.message.chat.first_name),
@@ -329,7 +360,7 @@ def start(bot, message):
                          reply_markup=reply_markup)
 
 
-token = '238900236:AAG_QHIiuYqIXwSiXHlnHb6WbTuDR2jJo30'
+token = '234786021:AAE4ZysONnfLaV82kRTQaxluF7DAbfeDJ7k'
 # test_token 234786021:AAE4ZysONnfLaV82kRTQaxluF7DAbfeDJ7k
 # super_token 238900236:AAG_QHIiuYqIXwSiXHlnHb6WbTuDR2jJo30
 stack_list = []
