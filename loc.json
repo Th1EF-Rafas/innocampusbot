@@ -1,0 +1,154 @@
+﻿{
+  "no_answer_users": {
+    "ru": "Администратор не ответила на заявку в течение 5 минут.\nЕё статус изменён на \"Не на месте\". Когда она вернется на рабочее место, вам придет оповещение. Подождите чуток 😌",
+    "en": "The administrator didn't answer in 5 minutes.\nHer current status is \"Not Present\" When she returns at her workspace, you will be  reminded. Wait for a while 😌"
+  },
+  "no_answer_admins": {
+    "ru": "Вы не отвечали на запросы в течение 5 минут, поэтому ваш статус был изменён на \"Не на месте\"Не забудьте сменить статус, когда вернетесь на рабочее место. Хорошего дня! ☺️",
+    "en": "You didn't answer to request(s)in 5 minutes.\nYour current is \"Not Present\""
+  },
+  "user_wait": {
+    "ru": "Я жду вас на первом этаже!",
+    "en": "I am waiting on 1st floor!"
+  },
+  "user_got": {
+    "ru": "Я получил, что хотел",
+    "en": "I got it"
+  },
+  "notification": {
+    "ru": "Оповещение было отправлено!",
+    "en": "Notification was sent!"
+  },
+  "walk_up": {
+    "ru": "Я иду к вам!",
+    "en": "I walk up to you!"
+  },
+  "users_ready": {
+    "ru": "Пользователи готовы к выдаче!",
+    "en": "Users are ready to the exchange!"
+  },
+  "item_changed": {
+    "ru": "Вещь была успешно заменена!",
+    "en": "Item was successfully changed!"
+  },
+  "admin_comes": {
+    "ru": "Администратор идёт!",
+    "en": "The administrator is coming!"
+  },
+  "good_trip": {
+    "ru": "Удачного пути!",
+    "en": "Have a good trip!"
+  },
+  "change_linen": {
+    "ru": "Сегодня вы можете поменять бельё!",
+    "en": "You are able to change Linen today!"
+  },
+  "change_water": {
+    "ru": "Вы можете поменять воду только во втором кампусе!\n",
+    "en": "You can get water only in 2nd campus right now!.\n"
+  },
+  "admin_not_works": {
+    "ru": "Администратор в данный момент не работает!\nПожалуйста, дождитесь следующего рабочего времени)!\nВы будете оповещены по её возвращению!",
+    "en": "The Administrator isn't working now!\nPlease, wait for the next work time(9:00 - 13:00 & 14:00 - 18:00!\nYou will be informed when the Administrator comes!"
+  },
+  "Yes": {
+    "ru": "Да",
+    "en": "Yes"
+  },
+  "No": {
+    "ru": "Нет",
+    "en": "No"
+  },
+  "tuesday_change": {
+    "ru": "Вы сможете поменять бельё только в следующий вторник!\nНе хотите ли, чтобы я вам напомнил об этом?",
+    "en": "You will be able to change Linen only on the next Tuesday!\nWould you like me to remind you about it?"
+  },
+  "thursday_change": {
+    "ru": "Вы сможете поменять бельё только в следующий четверг!\nНе хотите ли, чтобы я вам напомнил об этом?",
+    "en": "You will be able to change Linen only on the next Thursday!\nWould you like me to remind you about it?"
+  },
+  "nice_day": {
+    "ru": "Хорошего вам дня!",
+    "en": "Have a nice day!"
+  },
+  "next_weekday": {
+    "ru": "Вы получите напоминание в следующий ",
+    "en": "You will receive a notification on the next "
+  },
+  "tuesday": {
+    "ru": "вторник",
+    "en": "Tuesday"
+  },
+  "thursday": {
+    "ru": "четверг",
+    "en": "Thursday"
+  },
+  "change_today": {
+    "ru": "Вы можете сегодня поменять бельё!",
+    "en": "You can change Linen today!"
+  },
+  "Present": {
+    "ru": "На месте",
+    "en": "Present"
+  },
+  "Not present": {
+    "ru": "Не на месте",
+    "en": "Not present"
+  },
+  "admin_returned": {
+    "ru": "Администратор вернулся на своё рабочее место! Вы можете спуститьс яна первый этаж и взять то, что хотели",
+    "en": "The Administrator has returned to his workplace! Now you can come on the first floor and take what you needed"
+  },
+  "current_status": {
+    "ru": "Текущий статус: %s",
+    "en": "Current status: %s"
+  },
+  "campus": {
+    "ru": "Из какого вы кампуса?",
+    "en": "Which campus are you from?"
+  },
+  "first_campus": {
+    "ru": "Первый кампус",
+    "en": "First campus"
+  },
+  "second_campus": {
+    "ru": "Второй кампус",
+    "en": "Second campus"
+  },
+  "admin_workplace": {
+    "ru": "Администратор сейчас находится на своём рабочем месте!",
+    "en": "Administrator is currently on his workplace! Just come to her and take what you want."
+  },
+  "right_place": {
+    "ru": "Нажмите \"Я жду вас!\" только если вы находитесь на нужном месте!",
+    "en": "If you are at the right place(near the administrator room or linen changing room), and you don't see administrator there\n\n Press \"I am waiting!\"  "
+  },
+  "admin_not_present": {
+    "ru": "Администратор в данный момент не находится на месте! ",
+    "en": "The Administrator is not present at the time!You will be notified, when she comes back."
+  },
+  "user_wants": {
+    "ru": "Пользователь %s %s хочет поменять %s!",
+    "en": "User %s %s wants to change %s!"
+  },
+  "linen": {
+    "ru": "бельё",
+    "en": "linen"
+  },
+  "water": {
+    "ru": "воду",
+    "en": "water"
+  },
+  "need_message": {
+    "ru": "Сообщение с вашей просьбой было успешно отослано!",
+    "en": "Message with your need was successfully sent!"
+  },
+  "set_status": {
+    "ru": "Здравствуйте, %s!\nУстановите свой статус!Не забывайте сменять статус на \"Не на месте\", если отходите от комнаты администратора",
+    "en": "Hello, %s!\nSet your status!"
+  },
+  "user_start": {
+    "ru": "Здравствуйте, %s!\nВыберите то, что хотите обменять у администратора (бельё или воду)",
+    "en": "Hello, i'm InnoCampusBot, my duty is automation of processes in our dormitory!\n\nI'm working in test mode, so be patient☺\n%s!\nChoose what you want from administrator (Linen or Water)\n "
+  }
+}
