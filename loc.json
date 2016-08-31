@@ -59,28 +59,28 @@
     "ru": "Нет",
     "en": "No"
   },
-  "tuesday_change": {
-    "ru": "Вы сможете поменять бельё только в следующий вторник!\nНе хотите ли, чтобы я вам напомнил об этом?",
-    "en": "You will be able to change Linen only on the next Tuesday!\nWould you like me to remind you about it?"
-  },
-  "thursday_change": {
-    "ru": "Вы сможете поменять бельё только в следующий четверг!\nНе хотите ли, чтобы я вам напомнил об этом?",
-    "en": "You will be able to change Linen only on the next Thursday!\nWould you like me to remind you about it?"
+  "linen_day_change": {
+    "ru": "Вы сможете поменять бельё только в следующ%s!\nНе хотите ли, чтобы я вам напомнил об этом?",
+    "en": "You will be able to change Linen only on the next %s!\nWould you like me to remind you about it?"
   },
   "nice_day": {
     "ru": "Хорошего вам дня!",
     "en": "Have a nice day!"
   },
   "next_weekday": {
-    "ru": "Вы получите напоминание в следующий ",
-    "en": "You will receive a notification on the next "
+    "ru": "Вы получите напоминание в следующ%s!",
+    "en": "You will receive a notification on the next %s!"
   },
   "tuesday": {
-    "ru": "вторник",
+    "ru": "ий вторник",
     "en": "Tuesday"
   },
+  "wednesday": {
+    "ru": "ую среду",
+    "en": "Wednesday"
+  },
   "thursday": {
-    "ru": "четверг",
+    "ru": "ий четверг",
     "en": "Thursday"
   },
   "change_today": {
@@ -166,5 +166,21 @@
   "time_changed": {
     "ru": "Время выдачи было успешно изменено!",
     "en": "Issuing time has been successfully changed!"
+  },
+  "set_campus": {
+    "ru": "Пожалуйста, введите номер вашего корпуса и комнаты, как показано ниже:\n1 416\n(1-ый корпус, комната 416)",
+    "en": "Please, enter your campus and room number as following:\n1 416\n(1-st campus, room 416)"
+  },
+  "wrong_campus_data": {
+    "ru": "Неправильно введены данные о проживании!\nПопробуйте ещё раз и следуйте шаблону.",
+    "en": "Wrong campus data!\nTry one more time using template."
+  },
+  "campus_set": {
+    "ru": "Ваши данные о проживании были успешно сохранены!",
+    "en": "Your campus data has been successfully saved!"
+  },
+  "change_campus": {
+    "ru": "Изменить данные о проживании",
+    "en": "Change campus data"
   }
 }
