@@ -152,8 +152,8 @@
     "en": "Hello, %s!\nSet your status!"
   },
   "user_start": {
-    "ru": "Здравствуйте, %s!\nВыберите то, что хотите обменять у администратора (бельё или воду)",
-    "en": "Hello, i'm InnoCampusBot, my duty is automation of processes in our dormitory!\n\nI'm working in test mode, so be patient☺\n%s!\nChoose what you want from administrator (Linen or Water)\n "
+    "ru": "Здравствуйте, %s! Я - InnoCampusBot. Моя задача в автоматизировании процессов в нашем общежитии!\nЯ работаю в тестовом режиме, поэтому, пожалуйста, будьте терпеливее☺\n\nВыберите то, что хотите обменять у администратора (бельё или воду)",
+    "en": "Hello, %s! I am InnoCampusBot. My duty is automation of processes in our dormitory!\nI'm working in test mode, so, please, be patient☺\n\nChoose what you want from administrator (Linen or Water)\n "
   },
   "set_time": {
     "ru": "Здесь вы можете выставить время выдачи белья и воды!\nСледуйте нижеописанному шаблону:\n9 13 14 18\n12 13 17 18\n\nЭто будет означать, что время выдачи белья проходит в периоды 9-13, 14-18, время выдачи воды - 12-13, 17-18",

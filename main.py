@@ -23,7 +23,7 @@ notifs = dict()
 linenTime = bot_data["linen_time"]
 waterTime = bot_data["water_time"]
 
-linenDays = {key: bot_data[key] for key in [1, 2, 3]}
+linenDays = {key: bot_data[key] for key in [1, 2, 4]}
 
 
 class AdminUser(object):
@@ -330,9 +330,11 @@ def language(bot, message):
 
 
 def addlocal(id):
+    locals[id] = [""] * 3
     locals[id][0] = "en"
     with open("loc.txt", "a") as myfile:
         myfile.write(str(id) + "#en\n")
+    myfile.close()
 
 
 def check_campus(bot, chat):
@@ -359,15 +361,15 @@ def start(bot, message):
                          localisation_data["set_status"][locals[admin.ID][0]] % (message.message.chat.first_name),
                          reply_markup=reply_markup)
     else:
-        if check_campus(bot, message.message.chat_id):
-            reply_markup = replykeyboardmarkup.ReplyKeyboardMarkup([["\U0001F4A4", "\U0001F4A7"],
-                                                                    [localisation_data["change_campus"][
-                                                                         locals[message.message.chat_id][0]]]],
-                                                                   resize_keyboard=True)
-            bot.send_message(message.message.chat_id,
-                             localisation_data["user_start"][locals[message.message.chat_id][0]] % (
-                                 message.message.chat.first_name),
-                             reply_markup=reply_markup)
+        reply_markup = replykeyboardmarkup.ReplyKeyboardMarkup([["\U0001F4A4", "\U0001F4A7"],
+                                                                [localisation_data["change_campus"][
+                                                                     locals[message.message.chat_id][0]]]],
+                                                               resize_keyboard=True)
+        bot.send_message(message.message.chat_id,
+                         localisation_data["user_start"][locals[message.message.chat_id][0]] % (
+                             message.message.chat.first_name),
+                         reply_markup=reply_markup)
+        check_campus(bot, message.message.chat_id)
 
 
 token = bot_data["token"]

@@ -8,7 +8,7 @@ data = {
     "time_shift_server": -3,
     1: ["tuesday", 1],
     2: ["thursday", 3],
-    3: ["wednesday", 2]
+    4: ["wednesday", 2]
 }
 
 # 98449438 - Вера
