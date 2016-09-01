@@ -19,6 +19,7 @@ secondAdmin = bot_data["second_admin"]  # админ, отвечающий за 
 
 locals = dict()
 notifs = dict()
+requests = []
 
 linenTime = bot_data["linen_time"]
 waterTime = bot_data["water_time"]
@@ -35,6 +36,7 @@ class AdminUser(object):
         self.timeset = False
         self.messages = []
         self.timer = None
+        self.current_request = []
 
     def setstatus(self, stat):
         self.status = stat
@@ -43,8 +45,11 @@ class AdminUser(object):
 def createinlinekeyboard(keylist):
     tmp = []
     for l in keylist:
-        tmp.append(inlinekeyboardbutton.InlineKeyboardButton(text=l[0], callback_data=l[1]))
-    return inlinekeyboardmarkup.InlineKeyboardMarkup([tmp])
+        tmplist = []
+        for k in l:
+            tmplist.append(inlinekeyboardbutton.InlineKeyboardButton(text=k[0], callback_data=k[1]))
+        tmp.append(tmplist)
+    return inlinekeyboardmarkup.InlineKeyboardMarkup(tmp)
 
 
 def alarm(bot, job):
@@ -68,6 +73,7 @@ def alarm(bot, job):
     for user in admin.time_users:
         if user not in admin.users:
             admin.users.append(user)
+            write_reminder(admin.ID, user)
     admin.time_users = []
 
 
@@ -87,32 +93,33 @@ def settimer(bot, admin, chat_id, job_queue):
 # function is too huge
 def button(bot, update):
     query = update.callback_query
+    chat = query.message.chat_id
     if query.data.startswith("Я жду вас!"):
         admin = next((x for x in admins if x.ID == int(query.data[+10:])), None)
 
         mark_up = createinlinekeyboard(
-            [[localisation_data["user_got"][locals[query.message.chat_id][0]], "Я получил, что хотел" + str(admin.ID)]])
+            [[[localisation_data["user_got"][locals[chat][0]], "Я получил, что хотел" + str(admin.ID)]]])
 
-        mess = bot.editMessageText(text=localisation_data["notification"][locals[query.message.chat_id][0]],
-                                   chat_id=query.message.chat_id,
+        mess = bot.editMessageText(text=localisation_data["notification"][locals[chat][0]],
+                                   chat_id=chat,
                                    message_id=query.message.message_id,
                                    reply_markup=mark_up)
         admin.messages.append(mess)
 
         mark_up = createinlinekeyboard(
-            [[localisation_data["walk_up"][locals[query.message.chat_id][0]], "Я выхожу" + str(admin.ID)]])
+            [[[localisation_data["walk_up"][locals[chat][0]], "Я выхожу" + str(admin.ID)]]])
 
         if next((x for x in admin.messages if x.chat_id == admin.ID), None) is None:
             mess = bot.sendMessage(admin.ID, localisation_data["users_ready"][locals[admin.ID][0]],
                                    reply_markup=mark_up)
             admin.messages.append(mess)
 
-        settimer(bot, admin, query.message.chat_id, JobQueue(bot, prevent_autostart=False))
+        settimer(bot, admin, chat, JobQueue(bot, prevent_autostart=False))
 
     if query.data.startswith("Я получил, что хотел"):
         admin = next((x for x in admins if x.ID == int(query.data[+20:])), None)
-        mess = bot.editMessageText(text=localisation_data["item_changed"][locals[query.message.chat_id][0]],
-                                   chat_id=query.message.chat_id,
+        mess = bot.editMessageText(text=localisation_data["item_changed"][locals[chat][0]],
+                                   chat_id=chat,
                                    message_id=query.message.message_id)
         admin.messages.remove(next((x for x in admin.messages if x.message_id == mess.message_id), None))
 
@@ -124,7 +131,7 @@ def button(bot, update):
         del admin.timer
 
         mark_up = createinlinekeyboard(
-            [[localisation_data["user_got"][locals[query.message.chat_id][0]], "Я получил, что хотел" + str(admin.ID)]])
+            [[[localisation_data["user_got"][locals[chat][0]], "Я получил, что хотел" + str(admin.ID)]]])
         for user in admin.time_users:
             bot.editMessageText(text=localisation_data["admin_comes"][locals[user][0]], chat_id=user,
                                 message_id=next((x for x in admin.messages if x.chat.id == user), None).message_id,
@@ -138,25 +145,100 @@ def button(bot, update):
 
     if query.data == "No":
         bot.editMessageText(
-            text=localisation_data["nice_day"][locals[query.message.chat_id][0]],
-            chat_id=query.message.chat_id,
+            text=localisation_data["nice_day"][locals[chat][0]],
+            chat_id=chat,
             message_id=query.message.message_id)
 
     if query.data.startswith("Yes"):
         campus = int(query.data[-1:])
         bot.editMessageText(
-            text=localisation_data["next_weekday"][locals[query.message.chat_id][0]] % (
-                localisation_data[linenDays[campus][0]][locals[query.message.chat_id][0]]),
-            chat_id=query.message.chat_id,
+            text=localisation_data["next_weekday"][locals[chat][0]] % (
+                localisation_data[linenDays[campus][0]][locals[chat][0]]),
+            chat_id=chat,
+            message_id=query.message.message_id)
+        set_up_notification(bot, chat, campus)
+        with open("notifications.txt", "a") as myfile:
+            myfile.write(str(chat) + "\n")
+        myfile.close()
+
+    if query.data in ("next_request", "previous_request"):
+        admin = next((x for x in admins if x.ID == chat), None)
+        if query.data == "next_request":
+            requests.append(admin.current_request)
+            admin.current_request = requests.pop(0)
+        else:
+            requests.insert(0, admin.current_request)
+            admin.current_request = requests.pop(len(requests) - 1)
+
+        mark_up = createinlinekeyboard(
+            [[[localisation_data["previous_request"][locals[admin.ID][0]], "previous_request"],
+              [localisation_data["next_request"][locals[admin.ID][0]], "next_request"]],
+             [[localisation_data["reject"][locals[admin.ID][0]], "reject"],
+              [localisation_data["approve"][locals[admin.ID][0]], "approve"]],
+             [[localisation_data["cancel_requests"][locals[admin.ID][0]], "cancel_requests"]]])
+
+        bot.editMessageText(
+            text=localisation_data["get_request"][locals[admin.ID][0]] % tuple(admin.current_request[-3:]),
+            chat_id=admin.ID,
+            reply_markup=mark_up,
             message_id=query.message.message_id)
 
-        rd = REL.relativedelta(days=1, weekday=linenDays[campus][1])
-        today = datetime.now()
-        time = int((datetime(*(today + rd).timetuple()[:3]) - today).total_seconds())
-        job = Job(notify, time + 43200 + (TIME_SHIFT * 60 * 60), repeat=False, context=query.message.chat_id)
+    if query.data in ("reject", "approve"):
+        admin = next((x for x in admins if x.ID == chat), None)
+        if query.data == "reject":
+            bot.send_message(int(admin.current_request[0]), localisation_data["rejected"][locals[admin.ID][0]])
+        else:
+            bot.send_message(int(admin.current_request[0]), localisation_data["approved"][locals[admin.ID][0]])
+        bot.send_message(admin.ID,
+                         localisation_data["get_request"][locals[admin.ID][0]] % tuple(admin.current_request[-3:]))
 
-        notifs[job.context] = job
-        JobQueue(bot, prevent_autostart=False).put(job)
+        delete_request(admin.current_request)
+        admin.current_request = []
+
+        if len(requests) > 0:
+            admin.current_request = requests.pop(0)
+
+            mark_up = createinlinekeyboard(
+                [[[localisation_data["previous_request"][locals[admin.ID][0]], "previous_request"],
+                  [localisation_data["next_request"][locals[admin.ID][0]], "next_request"]],
+                 [[localisation_data["reject"][locals[admin.ID][0]], "reject"],
+                  [localisation_data["approve"][locals[admin.ID][0]], "approve"]],
+                 [[localisation_data["cancel_requests"][locals[admin.ID][0]], "cancel_requests"]]])
+            bot.editMessageText(
+                text=localisation_data["get_request"][locals[admin.ID][0]] % tuple(admin.current_request[-3:]),
+                chat_id=admin.ID,
+                reply_markup=mark_up,
+                message_id=query.message.message_id)
+        else:
+            bot.editMessageText(
+                text=localisation_data["no_requests"][locals[admin.ID][0]],
+                chat_id=admin.ID,
+                message_id=query.message.message_id)
+
+    if query.data == "cancel_requests":
+        admin = next((x for x in admins if x.ID == chat), None)
+        if admin.current_request:
+            requests.append(admin.current_request)
+        bot.editMessageText(
+            text=localisation_data["requests_canceled"][locals[admin.ID][0]],
+            chat_id=admin.ID,
+            message_id=query.message.message_id)
+
+
+def delete_request(request):
+    for tmp in fileinput.input('requests.txt', inplace=True):
+        if not tmp.startswith(" ".join(request)):
+            print(tmp.rstrip())
+    fileinput.close()
+
+
+def set_up_notification(bot, chat, campus):
+    rd = REL.relativedelta(days=1, weekday=linenDays[campus][1])
+    today = datetime.now()
+    time = int((datetime(*(today + rd).timetuple()[:3]) - today).total_seconds())
+    job = Job(notify, time + 43200 + (TIME_SHIFT * 60 * 60), repeat=False, context=chat)
+    notifs[job.context] = job
+    JobQueue(bot, prevent_autostart=False).put(job)
 
 
 def process_water(bot, chat):
@@ -183,11 +265,12 @@ def process_water(bot, chat):
         else:
             if chat not in admin.users:
                 admin.users.append(chat)
+                write_reminder(admin.ID, chat)
             bot.send_message(chat, localisation_data["admin_not_works"][locals[chat][0]])
 
     else:
-        mark_up = createinlinekeyboard([[localisation_data["Yes"][locals[chat][0]], "Yes" + str(campus)],
-                                        [localisation_data["No"][locals[chat][0]], 'No']])
+        mark_up = createinlinekeyboard([[[localisation_data["Yes"][locals[chat][0]], "Yes" + str(campus)],
+                                         [localisation_data["No"][locals[chat][0]], 'No']]])
 
         bot.send_message(
             chat_id=chat, text=localisation_data["linen_day_change"][locals[chat][0]] % (
@@ -197,9 +280,15 @@ def process_water(bot, chat):
 def notify(bot, job):
     bot.send_message(job.context, localisation_data["change_today"][locals[job.context][0]])
 
+    for tmp in fileinput.input('notifications.txt', inplace=True):
+        if not tmp.startswith(str(job.context)):
+            print(tmp.rstrip())
+    fileinput.close()
+
 
 changing_time = False
 setting_campus = False
+sending_request = False
 
 
 def process_message(bot, message):
@@ -237,10 +326,25 @@ def process_message(bot, message):
                     for user in admin.users:
                         bot.send_message(user, localisation_data["admin_returned"][locals[user][0]])
                     admin.users = []
+                    remind(admin.ID)
             if text == localisation_data["Time"][locals[admin.ID][0]]:
                 bot.send_message(admin.ID, localisation_data["set_time"][locals[admin.ID][0]])
                 changing_time = True
+            if localisation_data["look_requests"][locals[admin.ID][0]]:
+                if not requests:
+                    bot.send_message(admin.ID, localisation_data["no_requests"][locals[admin.ID][0]])
+                else:
+                    admin.current_request = requests.pop(0)
+                    mark_up = createinlinekeyboard(
+                        [[[localisation_data["previous_request"][locals[chat.id][0]], "previous_request"],
+                          [localisation_data["next_request"][locals[chat.id][0]], "next_request"]],
+                         [[localisation_data["reject"][locals[chat.id][0]], "reject"],
+                          [localisation_data["approve"][locals[chat.id][0]], "approve"]],
+                         [[localisation_data["cancel_requests"][locals[chat.id][0]], "cancel_requests"]]])
 
+                    list = admin.current_request[-3:]
+                    bot.send_message(admin.ID, localisation_data["get_request"][locals[chat.id][0]] % tuple(list),
+                                     reply_markup=mark_up)
 
     else:
 
@@ -249,15 +353,24 @@ def process_message(bot, message):
             try:
                 t = [int(i) for i in text.rstrip().split(" ")]
                 if len(t) != 2:
-                    raise Exception()
+                    raise Exception("")
                 change_campus(message, t)
                 setting_campus = False
 
                 bot.send_message(chat.id, localisation_data["campus_set"][locals[chat.id][0]])
-            except:
+            except Exception as exc:
                 bot.send_message(chat.id, localisation_data["wrong_campus_data"][locals[chat.id][0]])
+                if exc.args[0] != "":
+                    bot.send_message(chat.id, localisation_data[exc.args[0]][locals[chat.id][0]])
 
         if not setting_campus and check_campus(bot, chat.id):
+            global sending_request
+
+            if sending_request:
+                write_request(chat.id, locals[chat.id], text)
+                bot.send_message(chat.id, localisation_data["request_sent"][locals[chat.id][0]])
+                sending_request = False
+
             if (text == "\U0001F4A4"):
                 process_water(bot, chat.id)
 
@@ -274,16 +387,38 @@ def process_message(bot, message):
                 else:
                     if chat.id not in admin.users:
                         admin.users.append(chat.id)
+                        write_reminder(admin.ID, chat.id)
                     bot.send_message(chat.id, localisation_data["admin_not_works"][locals[chat.id][0]])
 
             if text == localisation_data["change_campus"][locals[message.message.chat_id][0]]:
                 locals[chat.id][1] = locals[chat.id][2] = ""
                 check_campus(bot, chat.id)
 
+            if text == localisation_data["leave_request"][locals[message.message.chat_id][0]]:
+                process_request(bot, message.message.chat_id)
+
     print('Got message: \33[0;32m{0}\33[0m from chat: {1}'.format(text, chat))
 
 
+def write_request(chat, lis, text):
+    tmp = [str(chat), lis[1], lis[2], text]
+    requests.append(tmp)
+    with open("requests.txt", "a") as myfile:
+        myfile.write(" ".join(tmp))
+    myfile.close()
+
+
+def process_request(bot, chat):
+    bot.send_message(chat, localisation_data["request"][locals[chat][0]])
+    global sending_request
+    sending_request = True
+
+
 def change_campus(message, t):
+    if not (0 < t[0] < 5):
+        raise Exception("campus")
+    if not (99 < t[1] < 500):
+        raise Exception("room")
     chat = message.message.chat_id
     locals[chat][1] = t[0]
     locals[chat][2] = t[1]
@@ -301,8 +436,8 @@ def process_change(bot, admin, chat):
         bot.send_message(chat.id, localisation_data["admin_workplace"][locals[chat.id][0]])
 
         mark_up = createinlinekeyboard(
-            [[localisation_data["user_wait"][locals[chat.id][0]], "Я жду вас!" + str(admin.ID)],
-             [localisation_data["user_got"][locals[chat.id][0]], "Я получил, что хотел" + str(admin.ID)]])
+            [[[localisation_data["user_wait"][locals[chat.id][0]], "Я жду вас!" + str(admin.ID)],
+              [localisation_data["user_got"][locals[chat.id][0]], "Я получил, что хотел" + str(admin.ID)]]])
         bot.send_message(chat.id, localisation_data["right_place"][locals[chat.id][0]], reply_markup=mark_up)
     else:
         bot.send_message(chat.id, localisation_data["admin_not_present"][locals[chat.id][0]])
@@ -313,6 +448,32 @@ def process_change(bot, admin, chat):
         bot.send_message(chat.id, localisation_data["need_message"][locals[chat.id][0]])
         if chat.id not in admin.users:
             admin.users.append(chat.id)
+            write_reminder(admin.ID, chat.id)
+
+
+def remind(admin):
+    for tmp in fileinput.input('reminders.txt', inplace=True):
+        if tmp.startswith(str(admin)):
+            print(tmp.rstrip().split(" ")[0])
+        else:
+            print(tmp.rstrip())
+    fileinput.close()
+
+
+def write_reminder(admin, chat):
+    boolean = False
+    for tmp in fileinput.input('reminders.txt', inplace=True):
+        if tmp.startswith(str(admin)):
+            boolean = True
+            print(tmp.rstrip() + " " + str(chat))
+        else:
+            print(tmp.rstrip())
+    fileinput.close()
+
+    if not boolean:
+        with open("reminders.txt", "a") as myfile:
+            myfile.write(str(admin) + " " + str(chat) + "\n")
+        myfile.close()
 
 
 def language(bot, message):
@@ -355,7 +516,8 @@ def start(bot, message):
 
         reply_markup = replykeyboardmarkup.ReplyKeyboardMarkup(
             [[localisation_data["Present"][locals[admin.ID][0]], localisation_data["Not present"][locals[admin.ID][0]],
-              localisation_data["Time"][locals[admin.ID][0]]]],
+              localisation_data["Time"][locals[admin.ID][0]]],
+             [localisation_data["look_requests"][locals[admin.ID][0]]]],
             resize_keyboard=True)
         bot.send_message(message.message.chat_id,
                          localisation_data["set_status"][locals[admin.ID][0]] % (message.message.chat.first_name),
@@ -363,6 +525,8 @@ def start(bot, message):
     else:
         reply_markup = replykeyboardmarkup.ReplyKeyboardMarkup([["\U0001F4A4", "\U0001F4A7"],
                                                                 [localisation_data["change_campus"][
+                                                                     locals[message.message.chat_id][0]]],
+                                                                [localisation_data["leave_request"][
                                                                      locals[message.message.chat_id][0]]]],
                                                                resize_keyboard=True)
         bot.send_message(message.message.chat_id,
@@ -378,7 +542,7 @@ admins = [AdminUser(firstAdmin), AdminUser(secondAdmin)]
 
 with open('loc.json', encoding='utf8') as data_file:
     localisation_data = json.load(data_file)
-    data_file.close()
+data_file.close()
 
 with open("loc.txt") as search:
     for line in search:
@@ -387,9 +551,27 @@ with open("loc.txt") as search:
             locals[int(line[0])] = [line[1], line[2], line[3]]
         else:
             locals[int(line[0])] = [line[1], "", ""]
-    search.close()
+search.close()
 
 updater = Updater(token)
+
+with open("notifications.txt") as search:
+    for line in search:
+        set_up_notification(updater.bot, int(line), linenDays[int(locals[int(line)][1])][1])
+search.close()
+
+with open("reminders.txt") as search:
+    for line in search:
+        tmp = line.rstrip().split(" ")
+        admin = next((x for x in admins if x.ID == int(tmp.pop(0))), None)
+        for user in tmp:
+            admin.users.append(int(user))
+search.close()
+
+with open("requests.txt") as search:
+    for line in search:
+        requests.append(line.rstrip().split(" ", 3))
+search.close()
 
 updater.dispatcher.add_handler(CallbackQueryHandler(button))
 updater.dispatcher.add_handler(CommandHandler('start', start))
@@ -400,3 +582,5 @@ updater.dispatcher.add_handler(MessageHandler([Filters.text], process_message))
 updater.start_polling()
 
 updater.idle()
+
+# ПРОВЕРИТЬ ТРЕД СЕФЕТИ

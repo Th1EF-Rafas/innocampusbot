@@ -124,12 +124,12 @@
     "en": "Administrator is currently on his workplace! Just come to her and take what you want."
   },
   "right_place": {
-    "ru": "Нажмите \"Я жду вас!\" только если вы находитесь на нужном месте!",
-    "en": "If you are at the right place(near the administrator room or linen changing room), and you don't see administrator there\n\n Press \"I am waiting!\"  "
+    "ru": "Если вы находитесь на месте (у кабинета администратора или комнаты смены белья) и администратора там нет - Нажмите \"Я жду вас!\"",
+    "en": "If you are at the right place (near the administrator room or linen changing room), and you don't see administrator there - press \"I am waiting!\""
   },
   "admin_not_present": {
-    "ru": "Администратор в данный момент не находится на месте! ",
-    "en": "The Administrator is not present at the time!You will be notified, when she comes back."
+    "ru": "Администратор в данный момент не находится на месте! Вам придёт оповещение по её возвращении.",
+    "en": "The Administrator is not present at the time! You will be notified, when she comes back."
   },
   "user_wants": {
     "ru": "Пользователь %s %s хочет поменять %s!",
@@ -182,5 +182,70 @@
   "change_campus": {
     "ru": "Изменить данные о проживании",
     "en": "Change campus data"
+  },
+  "campus": {
+    "ru": "Корпус не может быть негативным, да и их всего лишь 4 штуки",
+    "en": "Campus can't be negative, and there are only 4 campuses"
+  },
+  "room": {
+    "ru": "Комнаты не могут быть негативными, и у корпусов всего лишь 4 этажа",
+    "en": "Rooms can't be negative, and there are only 4 floors per campus"
+  },
+  "request": {
+    "ru": "Ниже вы можете оставить заявку администратору\n(номер корпуса и комнаты указывать необязательно)",
+    "en": "You can leave a request for the administrator\n(campus and room number are not necessary)"
+  },
+  "request_sent": {
+    "ru": "Ваша заявка была благополучно принята!\nОжидайте ответа от администратора!",
+    "en": "Your request has been successfully sent!\n Wait for the administrator's response!"
+  },
+  "leave_request": {
+    "ru": "Оставить заявку",
+    "en": "Leave request"
+  },
+  "look_requests": {
+    "ru": "Посмотреть заявки",
+    "en": "Look at the requests"
+  },
+  "no_requests": {
+    "ru": "Заявок нет!",
+    "en": "There are no requests!"
+  },
+  "get_request": {
+    "ru": "Корпус - %s\nКомната - %s\n%s",
+    "en": "Campus - %s\nRoom - %s\n%s"
+  },
+  "previous_request": {
+    "ru": "Предыдущая заявка",
+    "en": "Previous request"
+  },
+  "next_request": {
+    "ru": "Следующая заявка",
+    "en": "Next request"
+  },
+  "reject": {
+    "ru": "Отказать",
+    "en": "Reject"
+  },
+  "approve": {
+    "ru": "Принять",
+    "en": "Approve"
+  },
+  "cancel_requests": {
+    "ru": "Покинуть меню заявок",
+    "en": "Leave requests menu"
+  },
+  "requests_canceled": {
+    "ru": "Отмена просмотра заявок",
+    "en": "Cancel requests view"
+  },
+  "rejected": {
+    "ru": "Ваша заявка была отказана!",
+    "en": "Your request has been rejected!"
+  },
+  "approved": {
+    "ru": "Ваша заявка была одобрена и передана!",
+    "en": "Your request has been approved!"
   }
+
 }
