@@ -44,18 +44,18 @@
     "en": "You are able to change Linen today!"
   },
   "change_water": {
-    "ru": "Вы можете поменять воду только во втором кампусе!\n",
-    "en": "You can get water only in 2nd campus right now!.\n"
+    "ru": "Вы можете обменять воду!\n",
+    "en": "You can change the water!.\n"
   },
   "admin_not_works": {
     "ru": "Администратор в данный момент не работает!\nПожалуйста, дождитесь следующего рабочего времени)!\nВы будете оповещены по её возвращению!",
     "en": "The Administrator isn't working now!\nPlease, wait for the next work time(9:00 - 13:00 & 14:00 - 18:00!\nYou will be informed when the Administrator comes!"
   },
-  "Yes": {
+  "yes": {
     "ru": "Да",
     "en": "Yes"
   },
-  "No": {
+  "no": {
     "ru": "Нет",
     "en": "No"
   },
